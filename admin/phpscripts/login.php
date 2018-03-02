@@ -15,14 +15,13 @@
  		$id = $found_user['user_id'];//now you have access to the users ID
     $passwrd = $found_user['user_pass'];
     $signedin = $found_user['user_signedin'];
-    $timecreated = $found_user['user_timecreated'];
+    $timecreated = $found_user['user_timecreated']; // variable for time the user was created
 
     if($found_user['user_pass'] === $password && ($found_user['user_attempts'] < 3)) {
       $_SESSION['user_id'] = $id;
       $_SESSION['user_name'] = $found_user['user_name'];
       $_SESSION['user_fname'] = $found_user['user_fname'];
       $_SESSION['user_signedin'] = $found_user['user_signedin'];
-
 
  		if(mysqli_query($link, $loginstring)){
  			//if they've successfully logged in then update their ip address in the db
@@ -50,13 +49,19 @@
     return "You are locked out, sorry.";
   }
 
+  if($found_user['user_timecreated'] < 120) { // 120 = 2 minutes
+    redirect_to('admin_index.php');
+  } else {
+    $message = "Your account is suspended due to inactivity. Please contact the Administrator.";
+    return $message;
+  }
+
  	// } else {
  	// 	$message = "Username or password is incorrect";
  	// 	return $message;
  	}
 
-
- 	mysqli_close($link);//always make sure to close it off especially on a login
+ 	mysqli_close($link); //always make sure to close it off especially on a login
  }
 
 
